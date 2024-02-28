@@ -2,79 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Send and Receive TCP Data</title>
+    <title>Control Panel</title>
 </head>
 <body>
-    <button id="sendDataBtn">CmdAdvancedDrive</button>
-    <button id="cmdResetBtn">CmdReset</button>
-    <button id="cmdActivateAllBtn">CmdActivateAll</button>
-    <button id="cmdSeekForTagBtn">CmdSeekForTag</button>
-    <div id="predefinedCardIds"></div>
-    <div id="dataReceived"></div>
+    <button id="sendBtn">Send TCP Packet</button>
+    <div id="log"></div>
+
     <script>
-        const ws = new WebSocket('ws://localhost:3000');
-    
-        ws.onopen = function(event) {
-            console.log('WebSocket is open now.');
-        };
-    
-        ws.onmessage = function(event) {
-            console.log('Data received: ', event.data);
-            document.getElementById('dataReceived').innerHTML += `<p>Data received: ${event.data}</p>`;
-        };
-
-        document.getElementById('sendDataBtn').addEventListener('click', () => {
-            fetch('/send-data')
+        document.getElementById('sendBtn').addEventListener('click', function() {
+            fetch('/open-door')
                 .then(response => response.text())
-                .then(data => alert(data))
-                .catch(error => console.error('Error:', error));
+                .then(log => {
+                    document.getElementById('log').innerText = log;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('log').innerText = `Error: ${error}`;
+                });
         });
-    
-        document.getElementById('cmdResetBtn').addEventListener('click', () => {
-            fetch('/cmd-reset')
-                .then(response => response.text())
-                .then(data => alert(data))
-                .catch(error => console.error('Error:', error));
-        });
-    
-        document.getElementById('cmdActivateAllBtn').addEventListener('click', () => {
-            fetch('/cmd-activate-all')
-                .then(response => response.text())
-                .then(data => alert(data))
-                .catch(error => console.error('Error:', error));
-        });
-
-        document.getElementById('cmdSeekForTagBtn').addEventListener('click', () => {
-        fetch('/cmd-seek-for-tag')
-            .then(response => response.text())
-            .then(data => alert(data))
-            .catch(error => console.error('Error:', error));
-        });
-
-        // Заготовленные ID карт
-        const predefinedCardIds = new Set([
-            '02B37B06', // 0x53 0x45 0x49 0x0E
-            'E4320AAE', // 0x52 0x45 0x49 0x01
-            '52474901'  // 0x52 0x47 0x49 0x01
-        ]);
-
-        // Функция для отображения списка ID карт
-        function displayPredefinedCardIds() {
-            const listContainer = document.getElementById('predefinedCardIds');
-            listContainer.innerHTML = '<h3>Predefined Card IDs</h3><ul>';
-
-            predefinedCardIds.forEach(id => {
-                // Преобразование строки ID в формат с префиксом 0x для каждого байта
-                const formattedId = id.match(/.{1,2}/g).map(byte => '0x' + byte).join(' ');
-                listContainer.innerHTML += `<li>${formattedId}</li>`;
-            });
-
-            listContainer.innerHTML += '</ul>';
-        }
-
-        // Вызов функции при загрузке страницы
-        window.onload = displayPredefinedCardIds;
     </script>
 </body>
 </html>
