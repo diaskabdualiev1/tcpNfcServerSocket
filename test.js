@@ -45,7 +45,7 @@ tcpServer.listen(TCP_PORT, TCP_HOST, () => {
 // Настройка HTTP-сервера на Express для обработки GET-запросов
 httpApp.get('/open-door', (req, res) => {
     if (tcpSocket) {
-        const command = Buffer.from([0xFF, 0x00, 0x08, 0xD0, 0x09, 0x02, 0x00, 0x32, 0x00, 0x32, 0x00, 0x47]);
+        const command = Buffer.from([0xFF, 0x00, 0x08, 0xD0, 0x05, 0x02, 0x00, 0x14, 0x00, 0x14, 0x00, 0x07]);
         tcpSocket.write(command, () => {
             res.send('Команда "Activate All" отправлена');
         });
