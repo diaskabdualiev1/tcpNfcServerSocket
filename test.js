@@ -20,12 +20,16 @@ const tcpServer = net.createServer((socket) => {
         console.log('Инициализирующая команда отправлена клиенту');
     });
     socket.on('data', (data) => {
-        console.log(`Получены данные: ${data.toString('hex')}`);
-        //Полученный пример данных FF 00 06 83 02 02 B3 7B 06 C1 [Tag Serial:0x 02 B3 7B 06][UID Length:4][Tag Type:0x02]
-        // Предполагаем, что UID начинается с 5-го байта и занимает 4 байта
-        const uid = data.slice(5, 9).toString('hex').toUpperCase();
-        console.log(`Извлеченный UID карты: ${uid}`);
-        // Здесь вы можете добавить дополнительную логику обработки UID
+        // Проверяем, начинаются ли данные с FF 00 06
+        if (data.length >= 3 && data[0] === 0xFF && data[1] === 0x00 && data[2] === 0x06) {
+            console.log(`Получены данные: ${data.toString('hex')}`);
+            // Извлекаем UID, предполагая, что он начинается с 5-го байта и занимает 4 байта
+            const uid = data.slice(5, 9).toString('hex').toUpperCase();
+            console.log(`Извлеченный UID карты: ${uid}`);
+            // Здесь можно добавить дополнительную логику обработки UID
+        } else {
+            console.log(`Получены данные несоответствующего формата: ${data.toString('hex')}`);
+        }
     });
 
     socket.on('close', () => {
