@@ -5,12 +5,24 @@
     <title>Control Panel</title>
 </head>
 <body>
-    <button id="sendBtn">Send TCP Packet</button>
+    <button id="sendBtn">OpenDoor</button>
+    <button id="sendBtn1">Reset</button>
     <div id="log"></div>
 
     <script>
         document.getElementById('sendBtn').addEventListener('click', function() {
             fetch('/open-door')
+                .then(response => response.text())
+                .then(log => {
+                    document.getElementById('log').innerText = log;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('log').innerText = `Error: ${error}`;
+                });
+        });
+        document.getElementById('sendBtn1').addEventListener('click', function() {
+            fetch('/reset')
                 .then(response => response.text())
                 .then(log => {
                     document.getElementById('log').innerText = log;
